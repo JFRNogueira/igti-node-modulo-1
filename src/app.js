@@ -3,22 +3,24 @@ const router = require('./routes/routes')
 const app = express();
 const PORT = 3000;
 
+const { moreModels, lessModels, moreModelsThan, lessModelsThan, listModels } = require('./services/models.service');
+
 app.get('/marcas/maisModelos', (req, res) => {
-    res.send('/marcas/maisModelos')
+    return moreModels(req, res)
 })
 app.get('/marcas/menosModelos', (req, res) => {
-    res.send('/marcas/menosModelos')
+    return lessModels(req, res)
 })
-app.get('/marcas/maisModelos/:model', (req, res) => {
-    res.send('/marcas/maisModelos/:model')
+app.get('/marcas/maisModelos/:brandName', async (req, res) => {
+    return moreModelsThan(req, res)
 })
-app.get('/marcas/menosModelos/:model', (req, res) => {
-    res.send('/marcas/menosModelos/:model')
+app.get('/marcas/menosModelos/:brandName', (req, res) => {
+    return lessModelsThan(req, res)
 })
-app.post('/marcas/listaModelos', (req, res) => {
-    res.send('/marcas/listaModelos')
+app.post('/marcas/listaModelos/:brandName', (req, res) => {
+    return listModels(req, res)
 })
 
-app.listen(PORT, ()=>{
-    console.log(`Application is runnin on port ${PORT}`)
+app.listen(PORT, () => {
+    console.log(`Application is running on port ${PORT}`)
 })
