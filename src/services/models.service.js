@@ -5,105 +5,76 @@ const {
 } = require('../repositories/models.repository');
 
 
-exports.moreModels = async function moreModels(req, res) {
-    const allBrands = await getAllBrandsNames()
-    var targetBrand = []
-    var nModels = 0
+const brandsWithSize = async function brandsWithSize() {
+    const allBrands = await getAllBrandsNames();
+    var brandsWithSizeArray = [];
 
     for (let index = 0; index < allBrands.length; index++) {
-        var brandSize = await getOneBrandSize(allBrands[index])
-        if (brandSize == nModels) {
-            targetBrand.push(allBrands[index])
-        }
-        if (brandSize > nModels) {
-            nModels = brandSize
-            targetBrand = [allBrands[index]]
-        }
-    }
-
-    res.send(targetBrand)
-}
-
-
-exports.lessModels = async function lessModels(req, res) {
-    const allBrands = await getAllBrandsNames()
-    var targetBrand = []
-    var nModels = 1000000
-
-    for (let index = 0; index < allBrands.length; index++) {
-        var brandSize = await getOneBrandSize(allBrands[index])
-        if (brandSize == nModels) {
-            targetBrand.push(allBrands[index])
-        }
-        if (brandSize < nModels) {
-            nModels = brandSize
-            targetBrand = [allBrands[index]]
-        }
-    }
-
-    res.send(targetBrand)
-}
-
-
-exports.moreModelsThan = async function moreModelsThan(req, res) {
-    const allBrands = await getAllBrandsNames()
-    var brandsArray = []
-    const nBrands = req.params.nBrands
-
-    for (let index = 0; index < allBrands.length; index++) {
-        var brandSize = await getOneBrandSize(allBrands[index])
-        const element = {
-            text: `${allBrands[index]} - ${brandSize}`,
+        var brandSize = await getOneBrandSize(allBrands[index]);
+        const text = allBrands[index] + ' - ' + brandSize;
+        const brandsWithSizeElement = {
+            text: text,
+            brand: allBrands[index],
             size: brandSize
-        }
-        brandsArray.push(element)
+        };
+        brandsWithSizeArray.push(brandsWithSizeElement);
     }
 
-    sortedBrandsArray = brandsArray.sort((a, b) => {
-        if (a.size < b.size) return 1;
-        if (b.size < a.size) return -1;
-        return 0;
-    })
-
-    var result = []
-    for (let index = 0; index < nBrands; index++) {
-        const element = sortedBrandsArray[index];
-        const elementText = element.text
-        result.push(elementText)
-    }
-
-    res.send(result)
+    return brandsWithSizeArray;
 }
 
 
-exports.lessModelsThan = async function lessModelsThan(req, res) {
-    const allBrands = await getAllBrandsNames()
-    var brandsArray = []
-    const nBrands = req.params.nBrands
+const sortBySize = async function sortBySize(array, type) {
+    var sortedArray = []
+    if (type == 'asc') {
+        sortedArray = array.sort((a, b) => {
+            if (a.size > b.size) return 1;
+            if (b.size > a.size) return -1;
+            return 0;
+        })
+    } else {
+        sortedArray = array.sort((a, b) => {
+            if (a.size < b.size) return 1;
+            if (b.size < a.size) return -1;
+            return 0;
+        })
+    }
+    return sortedArray;
+}
 
-    for (let index = 0; index < allBrands.length; index++) {
-        var brandSize = await getOneBrandSize(allBrands[index])
-        const element = {
-            text: `${allBrands[index]} - ${brandSize}`,
-            size: brandSize
-        }
-        brandsArray.push(element)
+const getFirstNElements = async function getFirstNElements(array, nElements) {
+    var slicedArray = array.slice(0, nElements);
+    return slicedArray;
+}
+
+const getFieldFromArray = async function getFieldFromArray(array, field) {
+    var fieldArray = array.map(element => element[field]);
+    return fieldArray;
+}
+
+exports.handleMainRequest = async function handleMainRequest(req, res) {
+    const requestType = req.params.requestType
+    const nModels = req.params.nModels || 1
+
+    var sortType = ''
+    if (requestType.toLowerCase().includes('mais')) {
+        sortType = 'desc'
+    }
+    if (requestType.toLowerCase().includes('menos')) {
+        sortType = 'asc'
     }
 
-    sortedBrandsArray = brandsArray.sort((a, b) => {
-        if (a.size > b.size) return 1;
-        if (b.size > a.size) return -1;
-        return 0;
-    })
-
-    var result = []
-    for (let index = 0; index < nBrands; index++) {
-        const element = sortedBrandsArray[index];
-        const elementText = element.text
-        result.push(elementText)
+    const brandsWithSizeArray = await brandsWithSize()
+    const brandsWithSizeSorted = await sortBySize(brandsWithSizeArray, sortType)
+    var fieldArray = []
+    if (nModels == 1) {
+        fieldArray = await getFieldFromArray(brandsWithSizeSorted, 'brand')
+    } else {
+        fieldArray = await getFieldFromArray(brandsWithSizeSorted, 'text')
     }
+    const response = await getFirstNElements(fieldArray, nModels)
 
-    res.send(result)
+    res.send(response)
 }
 
 
