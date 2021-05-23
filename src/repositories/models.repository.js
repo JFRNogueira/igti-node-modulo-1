@@ -1,16 +1,16 @@
 const data = require('../data/car-list.json')
 
-async function getOneBrandDoc(brand){
+exports.getOneBrandDoc = async function getOneBrandDoc(brand) {
     for (let index = 0; index < data.length; index++) {
         const brandElement = data[index];
         if (brandElement['brand'] == brand) {
             return brandElement;
         }
     }
-    throw new Error({ error: `Brand ${brand} not found`})
+    throw new Error({ error: `Brand ${brand} not found` })
 }
 
-async function getOneBrandSize(brand){
+exports.getOneBrandSize = async function getOneBrandSize(brand) {
     for (let index = 0; index < data.length; index++) {
         const brandElement = data[index];
         if (brandElement['brand'] == brand) {
@@ -18,11 +18,11 @@ async function getOneBrandSize(brand){
             return size;
         }
     }
-    throw new Error({ error: `Brand ${brand} not found`})
+    throw new Error({ error: `Brand ${brand} not found` })
 }
 
 
-async function getAllBrandsNames(){
+exports.getAllBrandsNames = async function getAllBrandsNames() {
     const brands = []
     for (let index = 0; index < data.length; index++) {
         const brandElement = data[index];
@@ -31,7 +31,3 @@ async function getAllBrandsNames(){
     }
     return brands
 }
-
-
-
-module.exports = data;
