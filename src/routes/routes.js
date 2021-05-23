@@ -1,14 +1,22 @@
 const express = require('express');
+const bodyParser = require('body-parser')
 
-const router = express.Router();
+const app = express();
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({extended: true}))
 
-router.get("/", (req, res) => {
-    res.send('Hello World!')
-});
+const { handleMainRequest, listModels } = require('../services/models.service');
 
-// router.use((err, req, res, next) => {
-//     logger.error(`${req.method} ${req.baseUrl} - ${err.message}`)
-//     res.status(400).send({ error: err.message })
-// })
+app.get('/marcas/:requestType', (req, res) => {
+    return handleMainRequest(req, res)
+})
+app.get('/marcas/:requestType/:nModels', (req, res) => {
+    return handleMainRequest(req, res)
+})
 
-module.exports = router
+app.post('/marcas/listaModelos', (req, res) => {
+    return listModels(req, res)
+})
+
+
+module.exports = app
