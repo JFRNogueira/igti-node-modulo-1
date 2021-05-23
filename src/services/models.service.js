@@ -79,7 +79,7 @@ exports.handleMainRequest = async function handleMainRequest(req, res) {
 
 
 exports.listModels = async function listModels(req, res) {
-    const brandName = req.params.brandName
+    const brandName = await req.body.nomeMarca
     const allBrands = await getAllBrandsNames()
     var targetBrandName = ''
 
