@@ -11,10 +11,10 @@ app.get('/marcas/maisModelos', (req, res) => {
 app.get('/marcas/menosModelos', (req, res) => {
     return lessModels(req, res)
 })
-app.get('/marcas/maisModelos/:brandName', async (req, res) => {
+app.get('/marcas/listaMaisModelos/:nBrands', async (req, res) => {
     return moreModelsThan(req, res)
 })
-app.get('/marcas/menosModelos/:brandName', (req, res) => {
+app.get('/marcas/listaMenosModelos/:nBrands', (req, res) => {
     return lessModelsThan(req, res)
 })
 app.post('/marcas/listaModelos/:brandName', (req, res) => {

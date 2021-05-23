@@ -46,31 +46,28 @@ exports.lessModels = async function lessModels(req, res) {
 
 
 exports.moreModelsThan = async function moreModelsThan(req, res) {
-    const brandName = req.params.brandName
     const allBrands = await getAllBrandsNames()
-    var targetBrand = []
-    const nModels = await getOneBrandSize(brandName)
+    var brandsArray = []
+    const nBrands = req.params.nBrands
 
     for (let index = 0; index < allBrands.length; index++) {
         var brandSize = await getOneBrandSize(allBrands[index])
-        if (brandSize > nModels) {
-            const element = {
-                text: `${allBrands[index]} - ${brandSize}`,
-                size: brandSize
-            }
-            targetBrand.push(element)
+        const element = {
+            text: `${allBrands[index]} - ${brandSize}`,
+            size: brandSize
         }
+        brandsArray.push(element)
     }
 
-    sortedTargetBrand = targetBrand.sort((a, b) => {
+    sortedBrandsArray = brandsArray.sort((a, b) => {
         if (a.size < b.size) return 1;
         if (b.size < a.size) return -1;
         return 0;
     })
 
     var result = []
-    for (let index = 0; index < sortedTargetBrand.length; index++) {
-        const element = sortedTargetBrand[index];
+    for (let index = 0; index < nBrands; index++) {
+        const element = sortedBrandsArray[index];
         const elementText = element.text
         result.push(elementText)
     }
@@ -80,31 +77,28 @@ exports.moreModelsThan = async function moreModelsThan(req, res) {
 
 
 exports.lessModelsThan = async function lessModelsThan(req, res) {
-    const brandName = req.params.brandName
     const allBrands = await getAllBrandsNames()
-    var targetBrand = []
-    const nModels = await getOneBrandSize(brandName)
+    var brandsArray = []
+    const nBrands = req.params.nBrands
 
     for (let index = 0; index < allBrands.length; index++) {
         var brandSize = await getOneBrandSize(allBrands[index])
-        if (brandSize < nModels) {
-            const element = {
-                text: `${allBrands[index]} - ${brandSize}`,
-                size: brandSize
-            }
-            targetBrand.push(element)
+        const element = {
+            text: `${allBrands[index]} - ${brandSize}`,
+            size: brandSize
         }
+        brandsArray.push(element)
     }
 
-    sortedTargetBrand = targetBrand.sort((a, b) => {
+    sortedBrandsArray = brandsArray.sort((a, b) => {
         if (a.size > b.size) return 1;
         if (b.size > a.size) return -1;
         return 0;
     })
 
     var result = []
-    for (let index = 0; index < sortedTargetBrand.length; index++) {
-        const element = sortedTargetBrand[index];
+    for (let index = 0; index < nBrands; index++) {
+        const element = sortedBrandsArray[index];
         const elementText = element.text
         result.push(elementText)
     }
